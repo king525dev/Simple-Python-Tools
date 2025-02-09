@@ -1,31 +1,28 @@
 import turtle
-import colorsys
+from turtle import *
 
-def draw_one_color_arc(x,y,r,pensize,color):
-     turtle.up()
-     turtle.goto(x+r,y)
-     turtle.down()
-     turtle.seth(90)
-     turtle.pensize(pensize)
-     turtle.pencolor(color)
-     turtle.circle(r,180)
+turtle.title("rainbow spiral")
+speed(0)
+bgcolor("black")
+hideturtle()
+r,g,b=255,0,0
 
+for i in range(255*2):
+     colormode(255)
+     if i<255//3:
+          g+=3
+     elif i<255*2//3:
+          r-=3
+     elif i<255:
+          b+=3
+     elif i<255*4//3:
+          g-=3
+     elif i<255*5//3:
+          r+=3
+     else:
+          b-=3
+     fd(50+i)
+     rt(91)
+     pencolor(r,g,b)
 
-turtle.speed(0)
-turtle.hideturtle()
-turtle.bgcolor('black')
-turtle.title('Rainbow In Python Turtle')
-turtle.setup(700,700)
-num_colors = 49
-
-radius = 300
-penwidth = 20*7/num_colors
-hue = 0
-
-for i in range(num_colors):
-     (r,g,b) = colorsys.hsv_to_rgb(hue,1,1)
-     draw_one_color_arc(0,-100,radius,penwidth,(r,g,b))
-     radius -= (penwidth-1)
-     hue += 0.9/num_colors
-
-turtle.done()
+done()
