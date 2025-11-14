@@ -235,7 +235,7 @@ class RetroLifeGUI:
         delay = self.speed_scale.get()
         self.root.after(delay, self.run_step)
 
-def main():
+def retro():
     print("Conway's Game of Life Simulator")
     print("-------------------------------")
     print("1. Graphical Interface (GUI)")
@@ -256,4 +256,4 @@ def main():
         root.mainloop()
 
 if __name__ == "__main__":
-    main()
+    retro()

@@ -2,6 +2,8 @@ import random
 import time
 import copy
 import sys
+from modules import retro, run_gui
+import ctypes
 
 # Try to import Tkinter
 try:
@@ -15,6 +17,38 @@ except ImportError:
 DEFAULT_WIDTH = 60
 DEFAULT_HEIGHT = 20
 CELL_SIZE = 20 
+
+# ==========================================
+# PART 0: Window Manager (The Visibility Magic)
+# ==========================================
+class ConsoleManager:
+    """
+    Helper to hide/show the black command line window.
+    Works primarily on Windows.
+    """
+    def __init__(self):
+        self.hWnd = None
+        if sys.platform == "win32":
+            try:
+                # Get the handle of the console window
+                self.kernel32 = ctypes.WinDLL('kernel32')
+                self.user32 = ctypes.WinDLL('user32')
+                self.hWnd = self.kernel32.GetConsoleWindow()
+            except:
+                self.hWnd = None
+
+    def hide(self):
+        """Hides the console window."""
+        if self.hWnd:
+            self.user32.ShowWindow(self.hWnd, 0) # 0 = SW_HIDE
+
+    def show(self):
+        """Shows the console window."""
+        if self.hWnd:
+            self.user32.ShowWindow(self.hWnd, 1) # 1 = SW_NORMAL
+
+# Initialize the manager globally
+console_mgr = ConsoleManager()
 
 # ==========================================
 # PART 1: The Command Line Logic
@@ -107,7 +141,7 @@ class RetroLifeGUI:
         # Header
         header_font = font.Font(family="Courier", size=12, weight="bold")
         tk.Label(self.root, text="SIMULATION WINDOW", bg="#000080", fg="white", 
-                 font=header_font, pady=5).pack(fill=tk.X)
+                    font=header_font, pady=5).pack(fill=tk.X)
 
         # Controls Frame
         self.control_frame = tk.Frame(self.root, bg=self.bg_color, bd=3, relief="raised")
@@ -119,17 +153,17 @@ class RetroLifeGUI:
 
         self.btn_text = tk.StringVar(value="START")
         tk.Button(btn_area, textvariable=self.btn_text, command=self.toggle_sim,
-                  bg=self.bg_color, relief="raised", width=8).grid(row=0, column=0, padx=5)
+                    bg=self.bg_color, relief="raised", width=8).grid(row=0, column=0, padx=5)
 
         tk.Button(btn_area, text="CLEAR", command=self.clear_grid,
-                  bg=self.bg_color, relief="raised", width=8).grid(row=0, column=1, padx=5)
+                    bg=self.bg_color, relief="raised", width=8).grid(row=0, column=1, padx=5)
 
         tk.Button(btn_area, text="RANDOM", command=self.randomize_grid,
-                  bg=self.bg_color, relief="raised", width=8).grid(row=0, column=2, padx=5)
+                    bg=self.bg_color, relief="raised", width=8).grid(row=0, column=2, padx=5)
 
         # New Fullscreen Button
         tk.Button(btn_area, text="FULL SCR", command=self.go_fullscreen,
-                  bg=self.bg_color, relief="raised", width=8).grid(row=0, column=3, padx=5)
+                    bg=self.bg_color, relief="raised", width=8).grid(row=0, column=3, padx=5)
 
         tk.Label(btn_area, text="SPEED:", bg=self.bg_color).grid(row=0, column=4, padx=5)
         self.speed_scale = tk.Scale(btn_area, from_=500, to=10, orient=tk.HORIZONTAL, 
@@ -169,7 +203,7 @@ class RetroLifeGUI:
                 x1, y1 = x * CELL_SIZE, y * CELL_SIZE
                 x2, y2 = x1 + CELL_SIZE, y1 + CELL_SIZE
                 self.rects[x][y] = self.canvas.create_rectangle(x1, y1, x2, y2, 
-                                                       fill=self.cell_dead, outline="#d0d0d0")
+                                                        fill=self.cell_dead, outline="#d0d0d0")
 
         # Re-bind inputs
         self.canvas.bind("<Button-1>", self.handle_click)
@@ -277,14 +311,12 @@ class RetroLifeGUI:
 def run_alternative_mode():
     # TODO: Add your code for Alternative Mode here
     print("\n[!] Running Alternative Mode...")
-    print("    (No logic has been added to this module yet.)")
-    input("    Press Enter to exit...")
+    run_gui();
 
-def run_initial_mode():
+def run_retro_mode():
     # TODO: Add your code for Initial Mode here
-    print("\n[!] Running Initial Mode...")
-    print("    (No logic has been added to this module yet.)")
-    input("    Press Enter to exit...")
+    print("\n[!] Running Retro Mode...")
+    retro();
 
 # ==========================================
 # PART 4: The Launcher (Main Entry Point)
@@ -306,24 +338,24 @@ class Launcher:
 
         # Title
         tk.Label(frame, text="SELECT MODULE", bg="#000080", fg="white", 
-                 font=title_font, padx=20, pady=10).pack(pady=10, fill=tk.X)
+                    font=title_font, padx=20, pady=10).pack(pady=10, fill=tk.X)
 
         # Buttons
         tk.Button(frame, text="GRAPHICAL (GUI)", font=btn_font, 
-                  command=lambda: self.select_mode("GUI"), 
-                  bg="#c0c0c0", relief="raised", bd=3).pack(pady=5, ipadx=10, ipady=5, fill=tk.X)
+                    command=lambda: self.select_mode("GUI"), 
+                    bg="#c0c0c0", relief="raised", bd=3).pack(pady=5, ipadx=10, ipady=5, fill=tk.X)
 
         tk.Button(frame, text="COMMAND LINE (CLI)", font=btn_font, 
-                  command=lambda: self.select_mode("CLI"), 
-                  bg="#c0c0c0", relief="raised", bd=3).pack(pady=5, ipadx=10, ipady=5, fill=tk.X)
+                    command=lambda: self.select_mode("CLI"), 
+                    bg="#c0c0c0", relief="raised", bd=3).pack(pady=5, ipadx=10, ipady=5, fill=tk.X)
         
         tk.Button(frame, text="ALTERNATIVE MODE", font=btn_font, 
-                  command=lambda: self.select_mode("ALT"), 
-                  bg="#c0c0c0", relief="raised", bd=3).pack(pady=5, ipadx=10, ipady=5, fill=tk.X)
+                    command=lambda: self.select_mode("ALT"), 
+                    bg="#c0c0c0", relief="raised", bd=3).pack(pady=5, ipadx=10, ipady=5, fill=tk.X)
 
         tk.Button(frame, text="INITIAL MODE", font=btn_font, 
-                  command=lambda: self.select_mode("INIT"), 
-                  bg="#c0c0c0", relief="raised", bd=3).pack(pady=5, ipadx=10, ipady=5, fill=tk.X)
+                    command=lambda: self.select_mode("INIT"), 
+                    bg="#c0c0c0", relief="raised", bd=3).pack(pady=5, ipadx=10, ipady=5, fill=tk.X)
 
         self.mode = None 
 
@@ -349,7 +381,7 @@ def main():
     elif launcher.mode == "ALT":
         run_alternative_mode()
     elif launcher.mode == "INIT":
-        run_initial_mode()
+        run_retro_mode()
 
 if __name__ == "__main__":
     main()
