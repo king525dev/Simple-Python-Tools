@@ -55,6 +55,11 @@ console_mgr = ConsoleManager()
 # ==========================================
 def run_cli_version():
     """Runs the original text-based version of the game."""
+    
+    # Bring Console back
+    console_mgr.show()
+    
+    
     print("\n" * 50) 
     print("Initializing Command Line Mode...")
     time.sleep(1)
@@ -324,7 +329,7 @@ def run_retro_mode():
 class Launcher:
     def __init__(self, root):
         self.root = root
-        self.root.title("System Launcher")
+        self.root.title("Game Of Life Launcher")
         self.root.geometry("400x350") 
         self.root.configure(bg="#c0c0c0") 
 
@@ -353,7 +358,7 @@ class Launcher:
                     command=lambda: self.select_mode("ALT"), 
                     bg="#c0c0c0", relief="raised", bd=3).pack(pady=5, ipadx=10, ipady=5, fill=tk.X)
 
-        tk.Button(frame, text="INITIAL MODE", font=btn_font, 
+        tk.Button(frame, text="RETRO MODE", font=btn_font, 
                     command=lambda: self.select_mode("INIT"), 
                     bg="#c0c0c0", relief="raised", bd=3).pack(pady=5, ipadx=10, ipady=5, fill=tk.X)
 
@@ -364,6 +369,9 @@ class Launcher:
         self.root.destroy() 
 
 def main():
+    
+    console_mgr.hide()
+    
     root = tk.Tk()
     launcher = Launcher(root)
     root.mainloop()
