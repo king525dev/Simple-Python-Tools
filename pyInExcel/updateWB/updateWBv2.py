@@ -90,6 +90,9 @@ wb.properties.creator = "Ore"
 wb.properties.title = "OpenPyXL Cookbook"
 wb.properties.subject = "Learning OpenPyXL"
 
+# sheet.protection.sheet = True
+# sheet.protection.password = "password123"
+
 
 # =====================================================
 # BASIC CELL WRITING
@@ -178,8 +181,15 @@ data = [
 
 start_row = 5
 
-for row in data:
-     sheet.append(row)
+for row_index, row_data in enumerate(data, start=start_row):
+
+     for col_index, value in enumerate(row_data, start=1):
+
+          sheet.cell(
+               row=row_index,
+               column=col_index,
+               value=value
+          )
 
 
 # =====================================================
@@ -349,9 +359,9 @@ sheet.conditional_formatting.add(
 # HYPERLINKS
 # =====================================================
 
-sheet["L5"] = "OpenAI"
+sheet["L5"] = "king525dev"
 
-sheet["L5"].hyperlink = "https://openai.com"
+sheet["L5"].hyperlink = "https://king525dev.github.io/vcard-personal-portfolio/"
 
 sheet["L5"].style = "Hyperlink"
 
@@ -395,6 +405,15 @@ bar.add_data(
 bar.set_categories(category_ref)
 
 sheet.add_chart(bar, "N2")
+
+for row in sheet.iter_rows(
+     min_row=5,
+     max_row=10,
+     min_col=1,
+     max_col=3,
+     values_only=True
+):
+     print(row)
 
 
 # =====================================================
